@@ -24,11 +24,11 @@ from typing import final
 
 from pre_commit_check.bibtex import BibTeXLint
 from pre_commit_check.lint import Lint
-from pre_commit_check.fls_file import main_fls
-from pre_commit_check.git import is_aws_codecommit_repo, is_default_branch_main, print_short_status, CodeCommit, check_default_branch_main_boto3
+from pre_commit_check.git import is_aws_codecommit_repo, is_default_branch_main, CodeCommit, check_default_branch_main_boto3
 from pre_commit_check.utilities import get_root
 
 from pre_commit_check.languages import SwiftLint, RustLint, PythonLint, MakeLint
+from pre_commit_check.latex import LaTexLint
 
 log = logging.getLogger(__name__)
 
@@ -37,30 +37,6 @@ log = logging.getLogger(__name__)
 # the input and output files of the last latex command are in main.fls
 
 """Checks invariants and lints before running git commit"""
-
-
-@final
-class LaTexLint(Lint):
-    """Lint input files of main.tex """
-
-    @staticmethod
-    def check_input_files() -> None:
-        """Check the git status of the input files of main.tex"""
-        files: list[str] = []
-        with main_fls() as fls_file:
-            for line in fls_file:
-                files.append(line.removeprefix("./"))
-        input_files: list[str] = sorted(set(files))
-
-        for file in input_files:
-            print_short_status(file)
-
-    def run(self, root: str) -> None:
-        if not os.path.exists("main.fls"):
-            print("main.fls is missing")
-            sys.exit(1)
-
-        LaTexLint.check_input_files()
 
 
 @final

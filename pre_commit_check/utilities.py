@@ -1,3 +1,5 @@
+"""get the root of the git checkout"""
+
 from functools import cache
 import subprocess
 import sys
