@@ -12,7 +12,7 @@ __doc__ = "Lints the main.tex file before a git commit"
 from abc import ABC, abstractmethod
 import collections
 import collections.abc
-from contextlib import contextmanager
+#from contextlib import contextmanager
 import fileinput
 from functools import cache
 import logging
@@ -24,11 +24,15 @@ import subprocess
 import sys
 from typing import final
 
-import bibtexparser  # type: ignore
+# import bibtexparser  # type: ignore
 import botocore      # type: ignore
 import boto3         # type: ignore
-from git import Repo
-import git
+
+from pre_commit_check.bibtex import BibTeXLint
+from pre_commit_check.lint import Lint
+from pre_commit_check.fls_file import main_fls
+from pre_commit_check.git import is_aws_codecommit_repo, is_default_branch_main, print_short_status, CodeCommit, check_default_branch_main_boto3
+from pre_commit_check.utilities import get_root
 
 log = logging.getLogger(__name__)
 
@@ -39,248 +43,7 @@ log = logging.getLogger(__name__)
 SCRIPTS = ["codecommit-tags.py", "rusage.py", "aws-creds-role.py",
            "precommit-check.py", "git-log.py", "main_log.py"]
 
-REGION = "eu-central-1"
-
 """Checks invariants and lints before running git commit"""
-
-
-@cache
-def get_remote_url() -> str:
-    """get git remote url"""
-    try:
-        return subprocess.run(["git", "config", "--get",
-                               "remote.origin.url"], check=True, encoding="utf-8",
-                              stdout=subprocess.PIPE).stdout.strip()
-    except subprocess.CalledProcessError as error:
-        print("git config --get remote.origin.url failed")
-        print("Is this really a git repository?")
-        print(error)
-        sys.exit(-1)
-
-
-def is_aws_codecommit_repo() -> bool:
-    """check if the local repo is a AWS CodeCommit repo"""
-    remote_url = get_remote_url()
-    url_git = f"git-codecommit.{REGION}.amazonaws.com/v1/repos"
-    url_http = f"codecommit::{REGION}://"
-    if url_git in remote_url:
-        return True
-    if url_http in remote_url:
-        return True
-
-    return False
-
-
-def is_github_repo() -> bool:
-    """check if the local repo is a GitHub repo"""
-    remote_url = get_remote_url()
-    return "@github.com:" in remote_url
-
-
-def is_default_branch_main() -> bool:
-    """check if the default branch is main"""
-    try:
-        lines = subprocess.run(["git", "remote", "show", "origin"], check=True,
-                               encoding="utf-8", stdout=subprocess.PIPE).stdout.splitlines()
-        for line in lines:
-            if "HEAD branch" in line:
-                default = line.split(':')[1].removeprefix(' ')
-                if default == "main":
-                    return True
-
-        return False
-    except subprocess.CalledProcessError as error:
-        print("git remote show origin failed")
-        print("Is this really a git repository?")
-        print(error)
-        sys.exit(-1)
-
-
-def check_default_branch_main_boto3() -> None:
-    """check if the default branch is main"""
-    try:
-        client = boto3.client('codecommit')
-        remote_url = get_remote_url()
-        repo_name = remote_url.split('/')[-1]
-        default_branch = client.get_repository(repositoryName=repo_name)[
-            'repositoryMetadata']['defaultBranch']
-        if default_branch != 'main':
-            print(f"default branch is not main: {default_branch}")
-            print("this configuration is not supported")
-            sys.exit(-1)
-    except botocore.exceptions.ClientError as error:
-        print(f"no AWS credentials: {error}")
-    except botocore.exceptions.EndpointConnectionError as error:
-        print(f"endpoint connection failed: {error}")
-
-
-class Lint(ABC):
-    """Base class for lints"""
-
-    @abstractmethod
-    def run(self, root: str) -> None:
-        """abstract function for running lints"""
-
-
-@final
-class GitWrapper:
-    """Wrapper around GitPython and AWS CodeCommit"""
-
-    def __init__(self):
-        self.repo = Repo(get_root())
-
-    def get_origin_url(self) -> str:
-        """the remote origin url"""
-        return self.repo.remotes.origin.url
-
-    def get_head_sha(self) -> str:
-        """the hexsha of the commit of the HEAD object"""
-        return self.repo.head.commit.hexsha
-
-    def get_origin_head_sha(self) -> str:
-        """ a remote tracking branch"""
-        return self.repo.refs['origin/main'].commit.hexsha
-
-    def get_remote_origin_head_sha(self) -> str:
-        """the remote head commit sha"""
-        url = self.get_origin_url()
-        ref = git.cmd.Git().ls_remote(url, heads=True)
-        return ref.split('\t')[0]
-
-    def get_nr_of_local_commits(self) -> int:
-        """the list of local commits"""
-        return len(list(self.repo.iter_commits('origin/main..HEAD')))
-
-
-def print_short_status(url: str) -> None:
-    """print short version of git status"""
-    try:
-        subprocess.run(["git", "status", "-s", url], check=True)
-    except subprocess.CalledProcessError as error:
-        print(f"git status failed {error}")
-
-
-@final
-class CodeCommit(Lint):
-    """Lint AWS CodeCommit and local git"""
-
-    # git rev-parse origin/HEAD # to get the latest commit on the remote
-
-    # git rev-parse HEAD          # to get the latest commit on the local
-
-    # git config --get remote.origin.url
-
-    # git ls-remote -h `git config --get remote.origin.url`
-
-    def __init__(self):
-        self.git_wrapper = GitWrapper()
-
-    def run(self, root: str) -> None:
-        head_sha = self.git_wrapper.get_head_sha()
-        upstream_sha = self.git_wrapper.get_origin_head_sha()
-        if head_sha != upstream_sha:
-            print(
-                f"git: local commits {self.git_wrapper.get_nr_of_local_commits()}")
-        if self.git_wrapper.get_remote_origin_head_sha() != upstream_sha:
-            print("git: upstream changes")
-
-
-@final
-class MainFlsLines(collections.abc.Iterator):
-    """line iterator over main.fls"""
-
-    def __init__(self, file_descriptor):
-        self.file_descriptor = file_descriptor
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        while True:
-            line = self.file_descriptor.readline()
-            if not line:
-                raise StopIteration
-            if line.startswith("INPUT ") and not line.startswith("INPUT /usr/local"):
-                return line.removeprefix("INPUT ").removesuffix("\n")
-
-
-@contextmanager
-def main_fls():
-    """context manager for main.fls"""
-    with open("main.fls", "r") as file_descriptor:
-        try:
-            yield MainFlsLines(file_descriptor)
-        finally:
-            pass
-
-
-@final
-class BibTeXLint(Lint):
-    """Lint bib files and citations of main.tex """
-
-    @staticmethod
-    def get_citations() -> set[str]:
-        """Return the bibtex entries cited by main.tex"""
-        citations = set()
-        with fileinput.input(files=("main.aux")) as file_input:
-            for line in file_input:
-                if line.startswith("\citation{"):
-                    cites = line.removeprefix("\citation{").removesuffix("}\n")
-                    split = cites.split(',')
-                    for cite in split:
-                        citations.add(cite)
-        return citations
-
-    # bib files are not input files for latex. they are inputs for bibtex
-    @staticmethod
-    def get_bib_files() -> set[str]:
-        """Return the bib files needed by main.tex"""
-        bib_files: set[str] = set()
-        bbl_files: list[str] = []
-        with main_fls() as fls_file:
-            for line in fls_file:
-                if line.endswith(".bbl"):
-                    bbl_files.append(line.removeprefix("./"))
-
-        if not bbl_files:
-            return set()
-
-        blg_files = map(lambda bbl: os.path.splitext(bbl)[
-                        0]+'.blg', sorted(set(bbl_files)))
-        with fileinput.input(files=list(blg_files)) as file_input:
-            for line in file_input:
-                if line.startswith("Database file"):
-                    split = line.split(':')
-                    file = line.removeprefix(
-                        split[0]+": ").removesuffix("\n")
-                    bib_files.add(file)
-        return bib_files
-
-    def check_bib_files(self) -> None:
-        """Check the git status of the bib files of main.tex"""
-        for bib_file in self.get_bib_files():
-            print_short_status(bib_file)
-
-    @staticmethod
-    def check_citations() -> None:
-        """Check for duplicate bib entries"""
-        citations = BibTeXLint.get_citations()
-        for bib_file in BibTeXLint.get_bib_files():
-            with open(bib_file) as bibtex_file:
-                bib_database = bibtexparser.load(bibtex_file)
-                for entry in bib_database.entries:
-                    if not entry['ID'] in citations:
-                        entry_id = entry['ID']
-                        print(f"remove {entry_id:20} from {bib_file}")
-                        sys.exit(-1)
-
-    def run(self, root: str) -> None:
-        if not os.path.exists("main.fls"):
-            print("main.fls is missing")
-            sys.exit(1)
-
-        self.check_bib_files()
-        BibTeXLint.check_citations()
 
 
 @final
@@ -441,21 +204,6 @@ class MissingLabelsLint(Lint):
                     mainlabels.add(label)
 
         print(f"uncited label: {labels-mainlabels}")
-
-
-@cache
-def get_root() -> str:
-    """Return the root path of the git repository"""
-
-    try:
-        return subprocess.run(["git", "rev-parse",
-                               "--show-toplevel"], check=True, encoding="utf-8",
-                              stdout=subprocess.PIPE).stdout.strip()
-    except subprocess.CalledProcessError as error:
-        print("git rev-parse --show-toplevel failed")
-        print("Is this really a git repository?")
-        print(error)
-        sys.exit(-1)
 
 
 def primary_checks() -> int:
