@@ -32,7 +32,7 @@ import git
 
 log = logging.getLogger(__name__)
 
-# pylint, mypy
+# pylint, mypy, pytype
 
 # the input and output files of the last latex command are in main.fls
 

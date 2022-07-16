@@ -9,8 +9,8 @@ dependencies = [
     "boto3",
     "bibtexparser",
     "botocore",
-    "git",
+    "GitPython",
 ]
 
 [project.scripts]
-precommitcheck = "pre_commitcheck.pre_commitcheck:main"
+precommitcheck = "pre_commit_check.pre_commit_check:main"

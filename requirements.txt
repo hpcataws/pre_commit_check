@@ -1,0 +1,10 @@
+pytest
+pytype
+mypy
+pylint
+setuptools
+boto3
+bibtexparser
+botocore
+GitPython
+
