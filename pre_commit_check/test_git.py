@@ -1,4 +1,3 @@
-#import pytest
 from pre_commit_check.git import get_remote_url, is_github_repo, is_default_branch_main, is_aws_codecommit_repo
 
 
