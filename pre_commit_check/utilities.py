@@ -1,5 +1,6 @@
 from functools import cache
 import subprocess
+import sys
 
 
 @cache

@@ -1,7 +1,9 @@
 from functools import cache
 import subprocess
+import sys
 from typing import final
 
+import botocore      # type: ignore
 import boto3         # type: ignore
 from git import Repo
 import git
