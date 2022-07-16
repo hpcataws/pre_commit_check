@@ -16,3 +16,7 @@
 ```bash
 > /Users/king/opt/anaconda3/bin/precommitcheck
 ```
+
+```bash
+> pytest
+```
