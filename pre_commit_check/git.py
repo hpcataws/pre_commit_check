@@ -1,3 +1,5 @@
+"""utilities for working with git repositories"""
+
 from functools import cache
 import subprocess
 import sys
