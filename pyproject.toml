@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pre_commit_check"
+version = "0.0.1"
+dependencies = [
+    "boto3",
+    "bibtexparser",
+    "botocore",
+    "git",
+]
+
+[project.scripts]
+precommitcheck = "pre_commitcheck.pre_commitcheck:main"
