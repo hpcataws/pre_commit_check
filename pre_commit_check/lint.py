@@ -1,3 +1,5 @@
+"""the abstract base class for lints"""
+
 from abc import ABC, abstractmethod
 
 

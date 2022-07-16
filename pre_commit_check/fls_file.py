@@ -1,3 +1,5 @@
+"""context manager for reading .fls files"""
+
 import collections
 from contextlib import contextmanager
 #import fileinput

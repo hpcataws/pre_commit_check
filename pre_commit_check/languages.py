@@ -1,3 +1,4 @@
+"""lints for programming languages: Swift, Rust, Python, Make"""
 import shutil
 import os
 from pathlib import Path

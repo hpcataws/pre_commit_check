@@ -1,3 +1,5 @@
+"""lints for bibtex files """
+
 import os
 import fileinput
 import sys

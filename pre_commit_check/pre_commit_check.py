@@ -9,14 +9,8 @@ __version__ = '0.1'
 __author__ = "T. Schütt <schuett@gmail.com>"
 __doc__ = "Lints the main.tex file before a git commit"
 
-#from abc import abstractmethod
-#import collections
-#import collections.abc
-#from contextlib import contextmanager
 import fileinput
-#from functools import cache
 import logging
-from pathlib import Path
 import os
 import re
 import shutil
