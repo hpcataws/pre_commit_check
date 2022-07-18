@@ -14,11 +14,11 @@ from pre_commit_check.git import print_short_status
 
 @final
 class BibTeXLint(Lint):
-    """Lint bib files and citations of main.tex """
+    """Lint bib files and citations of main.tex."""
 
     @staticmethod
     def get_citations() -> set[str]:
-        """Return the bibtex entries cited by main.tex"""
+        """Return the bibtex entries cited by main.tex."""
         citations = set()
         with fileinput.input(files=("main.aux")) as file_input:
             for line in file_input:
@@ -32,7 +32,7 @@ class BibTeXLint(Lint):
     # bib files are not input files for latex. they are inputs for bibtex
     @staticmethod
     def get_bib_files() -> set[str]:
-        """Return the bib files needed by main.tex"""
+        """Return the bib files needed by main.tex."""
         bib_files: set[str] = set()
         bbl_files: list[str] = []
         with main_fls() as fls_file:

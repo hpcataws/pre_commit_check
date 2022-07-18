@@ -60,6 +60,7 @@ def is_default_branch_main() -> bool:
                 if default == "main":
                     return True
 
+        print(lines)
         return False
     except subprocess.CalledProcessError as error:
         print("git remote show origin failed")

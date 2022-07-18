@@ -1,4 +1,4 @@
-"""lints for programming languages: Swift, Rust, Python, Make"""
+"""lints for programming languages: Swift, Rust, Python, Make."""
 import shutil
 import os
 from pathlib import Path
@@ -15,11 +15,11 @@ SCRIPTS = ["codecommit-tags.py", "rusage.py", "aws-creds-role.py",
 
 @final
 class SwiftLint(Lint):
-    """Lint the Swift code"""
+    """Lint the Swift code."""
 
     @staticmethod
     def run_swift(_root: str) -> None:
-        """Run swift on the Swift code"""
+        """Run swift on the Swift code."""
         if shutil.which("swift"):
             try:
                 subprocess.run(["swift", "package", "clean"], check=True)
@@ -32,7 +32,7 @@ class SwiftLint(Lint):
 
     @staticmethod
     def run_swift_lint(root: str) -> None:
-        """Run swiftlint on the Swift code"""
+        """Run swiftlint on the Swift code."""
         if shutil.which("swiftlint"):
             working_directory = os.getcwd()
             os.chdir(root)
@@ -45,7 +45,7 @@ class SwiftLint(Lint):
 
     @staticmethod
     def run_swift_format(root: str) -> None:
-        """Run swift format and lint on the Swift code"""
+        """Run swift format and lint on the Swift code."""
         if shutil.which("swift-format"):
             working_directory = os.getcwd()
             os.chdir(root)
@@ -73,7 +73,7 @@ class SwiftLint(Lint):
 
 @final
 class RustLint(Lint):
-    """Lint the Rust code"""
+    """Lint the Rust code."""
 
     def run(self, root: str) -> None:
         package_file = Path(root + "/Cargo.toml")
