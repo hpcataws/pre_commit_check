@@ -24,6 +24,7 @@ def test_get_citations():
 
 
 def test_get_bib_files():
+    """ test the get_bib_files method from the bibtex module."""
     with mock_file("main.fls", MAIN_FLS_CONTENT):
         with mock_file("main.blg", MAIN_BLG_CONTENT):
             bib_files = BibTeXLint.get_bib_files()
