@@ -44,7 +44,7 @@ def is_aws_codecommit_repo() -> bool:
 
 
 def is_github_repo() -> bool:
-    """check if the local repo is a GitHub repo"""
+    """check if the local repo is a GitHub repo."""
     remote_url = get_remote_url()
     return "@github.com:" in remote_url
 
@@ -70,7 +70,7 @@ def is_default_branch_main() -> bool:
 
 
 def check_default_branch_main_boto3() -> None:
-    """check if the default branch is main"""
+    """check if the default branch is main."""
     try:
         client = boto3.client('codecommit')
         remote_url = get_remote_url()
@@ -89,36 +89,36 @@ def check_default_branch_main_boto3() -> None:
 
 @final
 class GitWrapper:
-    """Wrapper around GitPython and AWS CodeCommit"""
+    """Wrapper around GitPython and AWS CodeCommit."""
 
     def __init__(self):
         self.repo = Repo(get_root())
 
     def get_origin_url(self) -> str:
-        """the remote origin url"""
+        """the remote origin url."""
         return self.repo.remotes.origin.url
 
     def get_head_sha(self) -> str:
-        """the hexsha of the commit of the HEAD object"""
+        """the hexsha of the commit of the HEAD object."""
         return self.repo.head.commit.hexsha
 
     def get_origin_head_sha(self) -> str:
-        """ a remote tracking branch"""
+        """ a remote tracking branch."""
         return self.repo.refs['origin/main'].commit.hexsha
 
     def get_remote_origin_head_sha(self) -> str:
-        """the remote head commit sha"""
+        """the remote head commit sha."""
         url = self.get_origin_url()
         ref = git.cmd.Git().ls_remote(url, heads=True)
         return ref.split('\t')[0]
 
     def get_nr_of_local_commits(self) -> int:
-        """the list of local commits"""
+        """the list of local commits."""
         return len(list(self.repo.iter_commits('origin/main..HEAD')))
 
 
 def print_short_status(url: str) -> None:
-    """print short version of git status"""
+    """print short version of git status."""
     try:
         subprocess.run(["git", "status", "-s", url], check=True)
     except subprocess.CalledProcessError as error:
@@ -127,7 +127,7 @@ def print_short_status(url: str) -> None:
 
 @final
 class CodeCommit(Lint):
-    """Lint AWS CodeCommit and local git"""
+    """Lint AWS CodeCommit and local git."""
 
     # git rev-parse origin/HEAD # to get the latest commit on the remote
 

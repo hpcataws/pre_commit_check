@@ -6,6 +6,7 @@ import os
 
 @contextmanager
 def mock_file(name: str, content: str):
+    """mocks a file."""
     with open(name, 'w') as file_descriptor:
         file_descriptor.write(content)
     try:

@@ -1,4 +1,4 @@
-"""context manager for reading .fls files"""
+"""context manager for reading .fls files."""
 
 import collections
 from contextlib import contextmanager
@@ -8,7 +8,7 @@ from typing import final
 
 @final
 class MainFlsLines(collections.abc.Iterator):
-    """line iterator over main.fls"""
+    """line iterator over main.fls."""
 
     def __init__(self, file_descriptor):
         self.file_descriptor = file_descriptor
@@ -27,7 +27,7 @@ class MainFlsLines(collections.abc.Iterator):
 
 @contextmanager
 def main_fls():
-    """context manager for main.fls"""
+    """context manager for main.fls."""
     with open("main.fls", "r") as file_descriptor:
         try:
             yield MainFlsLines(file_descriptor)
