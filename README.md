@@ -3,6 +3,7 @@
 
 ```bash
 > python -m build
+> pip install -r requirements.txt
 ```
 
 
@@ -19,4 +20,5 @@
 
 ```bash
 > pytest
+> pytest --html=report.html --self-contained-html
 ```
