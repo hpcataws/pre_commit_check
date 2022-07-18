@@ -55,13 +55,13 @@ class BibTeXLint(Lint):
         return bib_files
 
     def check_bib_files(self) -> None:
-        """Check the git status of the bib files of main.tex"""
+        """Check the git status of the bib files of main.tex."""
         for bib_file in self.get_bib_files():
             print_short_status(bib_file)
 
     @staticmethod
     def check_citations() -> None:
-        """Check for duplicate bib entries"""
+        """Check for duplicate bib entries."""
         citations = BibTeXLint.get_citations()
         for bib_file in BibTeXLint.get_bib_files():
             with open(bib_file) as bibtex_file:

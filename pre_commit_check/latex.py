@@ -1,4 +1,4 @@
-"""checks the git status of the input of main.tex"""
+"""checks the git status of the input of main.tex."""
 
 import os
 import sys
@@ -11,11 +11,11 @@ from pre_commit_check.git import print_short_status
 
 @final
 class LaTexLint(Lint):
-    """Lint input files of main.tex """
+    """Lint input files of main.tex."""
 
     @staticmethod
     def check_input_files() -> None:
-        """Check the git status of the input files of main.tex"""
+        """Check the git status of the input files of main.tex."""
         files: list[str] = []
         with main_fls() as fls_file:
             for line in fls_file:
@@ -26,6 +26,7 @@ class LaTexLint(Lint):
             print_short_status(file)
 
     def run(self, root: str) -> None:
+        """Run the latex lint: check for input files."""
         if not os.path.exists("main.fls"):
             print("main.fls is missing")
             sys.exit(1)

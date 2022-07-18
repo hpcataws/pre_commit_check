@@ -61,6 +61,7 @@ class SwiftLint(Lint):
             os.chdir(working_directory)
 
     def run(self, root: str) -> None:
+        """Lint Swift code."""
         package_file = Path(root + "/Package.swift")
         if package_file.is_file():
             print_short_status(os.fspath(package_file))
@@ -76,6 +77,7 @@ class RustLint(Lint):
     """Lint the Rust code."""
 
     def run(self, root: str) -> None:
+        """Run cargo and clippy over Rust code."""
         package_file = Path(root + "/Cargo.toml")
         if package_file.is_file():
             if shutil.which("cargo"):
@@ -93,18 +95,20 @@ class RustLint(Lint):
 
 @final
 class PythonLint(Lint):
-    """Check the git status of the Python scripts"""
+    """Check the git status of the Python scripts."""
 
     def run(self, root: str) -> None:
+        """Check for python scripts."""
         for script in SCRIPTS:
             print_short_status(script)
 
 
 @final
 class MakeLint(Lint):
-    """Lint C++ code with a Makefile"""
+    """Lint C++ code with a Makefile."""
 
     def run(self, root: str) -> None:
+        """Run make on MakeFiles."""
         package_file = Path(root + "/code/Makefile")
         if package_file.is_file():
             working_directory = os.getcwd()
