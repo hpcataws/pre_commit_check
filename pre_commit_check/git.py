@@ -93,19 +93,19 @@ class GitWrapper:
     """Wrapper around GitPython and AWS CodeCommit."""
 
     def __init__(self):
-        self.repo = Repo(get_root())
+        self.__repo = Repo(get_root())
 
     def get_origin_url(self) -> str:
         """the remote origin url."""
-        return self.repo.remotes.origin.url
+        return self.__repo.remotes.origin.url
 
     def get_head_sha(self) -> str:
         """the hexsha of the commit of the HEAD object."""
-        return self.repo.head.commit.hexsha
+        return self.__repo.head.commit.hexsha
 
     def get_origin_head_sha(self) -> str:
         """ a remote tracking branch."""
-        return self.repo.refs['origin/main'].commit.hexsha
+        return self.__repo.refs['origin/main'].commit.hexsha
 
     def get_remote_origin_head_sha(self) -> str:
         """the remote head commit sha."""
@@ -115,7 +115,7 @@ class GitWrapper:
 
     def get_nr_of_local_commits(self) -> int:
         """the list of local commits."""
-        return len(list(self.repo.iter_commits('origin/main..HEAD')))
+        return len(list(self.__repo.iter_commits('origin/main..HEAD')))
 
 
 @final
@@ -131,13 +131,13 @@ class CodeCommit(Lint):
     # git ls-remote -h `git config --get remote.origin.url`
 
     def __init__(self):
-        self.git_wrapper = GitWrapper()
+        self.__git_wrapper = GitWrapper()
 
     def run(self, root: str, git_status: GitStatusABC) -> None:
-        head_sha = self.git_wrapper.get_head_sha()
-        upstream_sha = self.git_wrapper.get_origin_head_sha()
+        head_sha = self.__git_wrapper.get_head_sha()
+        upstream_sha = self.__git_wrapper.get_origin_head_sha()
         if head_sha != upstream_sha:
             print(
-                f"git: local commits {self.git_wrapper.get_nr_of_local_commits()}")
-        if self.git_wrapper.get_remote_origin_head_sha() != upstream_sha:
+                f"git: local commits {self.__git_wrapper.get_nr_of_local_commits()}")
+        if self.__git_wrapper.get_remote_origin_head_sha() != upstream_sha:
             print("git: upstream changes")
