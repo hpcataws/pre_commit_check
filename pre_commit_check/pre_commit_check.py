@@ -26,9 +26,9 @@ from pre_commit_check.bibtex import BibTeXLint
 from pre_commit_check.lint import Lint
 from pre_commit_check.git import is_aws_codecommit_repo, is_default_branch_main, CodeCommit, check_default_branch_main_boto3
 from pre_commit_check.utilities import get_root
-
 from pre_commit_check.languages import SwiftLint, RustLint, PythonLint, MakeLint
 from pre_commit_check.latex import LaTexLint
+from pre_commit_check.git_status import GitStatusABC, GitStatus
 
 log = logging.getLogger(__name__)
 
@@ -43,7 +43,7 @@ log = logging.getLogger(__name__)
 class MissingLabelsLint(Lint):
     """Lint labels"""
 
-    def run(self, root: str) -> None:
+    def run(self, root: str, git_status: GitStatusABC) -> None:
         labels = set()
         mainlabels = set()
         with fileinput.input(files=("main.aux")) as file_input:
@@ -125,11 +125,12 @@ def main() -> int:
     check_default_branch_main_boto3()
 
     root = get_root()
+    git_status = GitStatus()
 
     lints = [PythonLint(), LaTexLint(), BibTeXLint(), SwiftLint(), RustLint(),
              CodeCommit(), MakeLint(), MissingLabelsLint()]
     for lint in lints:
-        lint.run(root)
+        lint.run(root, git_status)
 
     return 0
 

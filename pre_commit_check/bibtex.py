@@ -1,4 +1,4 @@
-"""lints for bibtex files """
+"""lints for bibtex files."""
 
 import os
 import fileinput
@@ -9,7 +9,8 @@ import bibtexparser  # type: ignore
 
 from pre_commit_check.lint import Lint
 from pre_commit_check.fls_file import main_fls
-from pre_commit_check.git import print_short_status
+#from pre_commit_check.git import print_short_status
+from pre_commit_check.git_status import GitStatusABC
 
 
 @final
@@ -54,10 +55,10 @@ class BibTeXLint(Lint):
                     bib_files.add(file)
         return bib_files
 
-    def check_bib_files(self) -> None:
+    def check_bib_files(self, git_status: GitStatusABC) -> None:
         """Check the git status of the bib files of main.tex."""
         for bib_file in self.get_bib_files():
-            print_short_status(bib_file)
+            git_status.print_short_status(bib_file)
 
     @staticmethod
     def check_citations() -> None:
@@ -72,10 +73,11 @@ class BibTeXLint(Lint):
                         print(f"remove {entry_id:20} from {bib_file}")
                         sys.exit(-1)
 
-    def run(self, root: str) -> None:
+    def run(self, root: str, git_status: GitStatusABC) -> None:
+        """Lint the bibtex files."""
         if not os.path.exists("main.fls"):
             print("main.fls is missing")
             sys.exit(1)
 
-        self.check_bib_files()
+        self.check_bib_files(git_status)
         BibTeXLint.check_citations()

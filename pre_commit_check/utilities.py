@@ -1,4 +1,4 @@
-"""get the root of the git checkout"""
+"""get the root of the git checkout."""
 
 from functools import cache
 import subprocess
@@ -7,7 +7,7 @@ import sys
 
 @cache
 def get_root() -> str:
-    """Return the root path of the git repository"""
+    """Return the root path of the git repository."""
 
     try:
         return subprocess.run(["git", "rev-parse",

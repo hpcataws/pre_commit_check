@@ -12,6 +12,7 @@ import git
 
 from pre_commit_check.lint import Lint
 from pre_commit_check.utilities import get_root
+from pre_commit_check.git_status import GitStatusABC
 
 REGION = "eu-central-1"
 
@@ -117,12 +118,12 @@ class GitWrapper:
         return len(list(self.repo.iter_commits('origin/main..HEAD')))
 
 
-def print_short_status(url: str) -> None:
-    """print short version of git status."""
-    try:
-        subprocess.run(["git", "status", "-s", url], check=True)
-    except subprocess.CalledProcessError as error:
-        print(f"git status failed {error}")
+# def print_short_status(url: str) -> None:
+#    """print short version of git status."""
+#    try:
+#        subprocess.run(["git", "status", "-s", url], check=True)
+#    except subprocess.CalledProcessError as error:
+#        print(f"git status failed {error}")
 
 
 @final
@@ -140,7 +141,7 @@ class CodeCommit(Lint):
     def __init__(self):
         self.git_wrapper = GitWrapper()
 
-    def run(self, root: str) -> None:
+    def run(self, root: str, git_status: GitStatusABC) -> None:
         head_sha = self.git_wrapper.get_head_sha()
         upstream_sha = self.git_wrapper.get_origin_head_sha()
         if head_sha != upstream_sha:

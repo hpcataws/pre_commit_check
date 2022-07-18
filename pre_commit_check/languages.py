@@ -7,7 +7,8 @@ import subprocess
 from typing import final
 
 from pre_commit_check.lint import Lint
-from pre_commit_check.git import print_short_status
+#from pre_commit_check.git import print_short_status
+from pre_commit_check.git_status import GitStatusABC
 
 SCRIPTS = ["codecommit-tags.py", "rusage.py", "aws-creds-role.py",
            "precommit-check.py", "git-log.py", "main_log.py"]
@@ -60,11 +61,11 @@ class SwiftLint(Lint):
                 sys.exit(-1)
             os.chdir(working_directory)
 
-    def run(self, root: str) -> None:
+    def run(self, root: str, git_status: GitStatusABC) -> None:
         """Lint Swift code."""
         package_file = Path(root + "/Package.swift")
         if package_file.is_file():
-            print_short_status(os.fspath(package_file))
+            git_status.print_short_status(os.fspath(package_file))
             print("swift repo")
 
             SwiftLint.run_swift_lint(root)
@@ -76,7 +77,7 @@ class SwiftLint(Lint):
 class RustLint(Lint):
     """Lint the Rust code."""
 
-    def run(self, root: str) -> None:
+    def run(self, root: str, git_status: GitStatusABC) -> None:
         """Run cargo and clippy over Rust code."""
         package_file = Path(root + "/Cargo.toml")
         if package_file.is_file():
@@ -89,7 +90,7 @@ class RustLint(Lint):
                 except subprocess.CalledProcessError as error:
                     print(f"cargo clippy failed: {error}")
                     sys.exit(-1)
-                print_short_status(os.fspath(package_file))
+                git_status.print_short_status(os.fspath(package_file))
                 print("rust repo")
 
 
@@ -97,17 +98,17 @@ class RustLint(Lint):
 class PythonLint(Lint):
     """Check the git status of the Python scripts."""
 
-    def run(self, root: str) -> None:
+    def run(self, root: str, git_status: GitStatusABC) -> None:
         """Check for python scripts."""
         for script in SCRIPTS:
-            print_short_status(script)
+            git_status.print_short_status(script)
 
 
 @final
 class MakeLint(Lint):
     """Lint C++ code with a Makefile."""
 
-    def run(self, root: str) -> None:
+    def run(self, root: str, git_status: GitStatusABC) -> None:
         """Run make on MakeFiles."""
         package_file = Path(root + "/code/Makefile")
         if package_file.is_file():
