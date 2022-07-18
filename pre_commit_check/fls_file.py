@@ -2,7 +2,6 @@
 
 import collections
 from contextlib import contextmanager
-#import fileinput
 from typing import final
 
 
@@ -11,12 +10,14 @@ class MainFlsLines(collections.abc.Iterator):
     """line iterator over main.fls."""
 
     def __init__(self, file_descriptor):
+        """Initialize the iterator."""
         self.file_descriptor = file_descriptor
 
     def __iter__(self):
         return self
 
     def __next__(self):
+        """Next step method of the iterator."""
         while True:
             line = self.file_descriptor.readline()
             if not line:
@@ -27,7 +28,7 @@ class MainFlsLines(collections.abc.Iterator):
 
 @contextmanager
 def main_fls():
-    """context manager for main.fls."""
+    """Context manager for main.fls."""
     with open("main.fls", "r") as file_descriptor:
         try:
             yield MainFlsLines(file_descriptor)

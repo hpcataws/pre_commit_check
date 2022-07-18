@@ -1,7 +1,10 @@
+"""Mock class for testing print_short_status."""
+
 from pre_commit_check.git_status import GitStatusABC
 
 
 class GitStatusMock(GitStatusABC):
+    """Mock class for GitStatus."""
 
     def __init__(self):
         self.__counter = 0

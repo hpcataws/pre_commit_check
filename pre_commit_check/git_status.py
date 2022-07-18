@@ -5,6 +5,7 @@ import subprocess
 
 
 class GitStatusABC(ABC):
+    """ABC for GitStatus."""
 
     @abstractmethod
     def print_short_status(self, url: str) -> None:
@@ -12,6 +13,7 @@ class GitStatusABC(ABC):
 
 
 class GitStatus(GitStatusABC):
+    """Container for printing the git status of files."""
 
     def print_short_status(self, url: str) -> None:
         """Print short version of git status."""

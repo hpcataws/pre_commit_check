@@ -118,14 +118,6 @@ class GitWrapper:
         return len(list(self.repo.iter_commits('origin/main..HEAD')))
 
 
-# def print_short_status(url: str) -> None:
-#    """print short version of git status."""
-#    try:
-#        subprocess.run(["git", "status", "-s", url], check=True)
-#    except subprocess.CalledProcessError as error:
-#        print(f"git status failed {error}")
-
-
 @final
 class CodeCommit(Lint):
     """Lint AWS CodeCommit and local git."""
