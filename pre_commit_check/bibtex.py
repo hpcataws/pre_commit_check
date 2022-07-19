@@ -9,7 +9,6 @@ import bibtexparser  # type: ignore
 
 from pre_commit_check.lint import Lint
 from pre_commit_check.fls_file import main_fls
-#from pre_commit_check.git import print_short_status
 from pre_commit_check.git_status import GitStatusABC
 
 
