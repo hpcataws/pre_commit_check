@@ -9,6 +9,7 @@ class GitStatusABC(ABC):
 
     @abstractmethod
     def print_short_status(self, url: str) -> None:
+        """Abstract method for printing a git status."""
         pass
 
 

@@ -24,7 +24,7 @@ from typing import final
 
 from pre_commit_check.bibtex import BibTeXLint
 from pre_commit_check.lint import Lint
-from pre_commit_check.git import is_aws_codecommit_repo, is_default_branch_main, CodeCommit, check_default_branch_main_boto3
+from pre_commit_check.git import is_aws_codecommit_repo, is_default_branch_main, CodeCommit, check_default_branch_main_boto3, GitRemoteUrl
 from pre_commit_check.utilities import get_root
 from pre_commit_check.languages import SwiftLint, RustLint, PythonLint, MakeLint
 from pre_commit_check.latex import LaTexLint
@@ -72,6 +72,8 @@ class MissingLabelsLint(Lint):
 
 def primary_checks() -> int:
     """primary checks"""
+
+    git_remote_url = GitRemoteUrl()
     if not sys.version_info >= (3, 9):
         print("This script requires Python 3.9 or higher!")
         print("You are using Python {}.{}.".format(
@@ -88,7 +90,7 @@ def primary_checks() -> int:
         print("this configuration is not supported")
         return 1
 
-    if not is_aws_codecommit_repo():
+    if not is_aws_codecommit_repo(git_remote_url):
         print("this is no AWS CodeCommit respository")
         print("this configuration is not supported")
         return 1

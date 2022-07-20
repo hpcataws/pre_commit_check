@@ -1,5 +1,6 @@
 """utilities for working with git repositories"""
 
+from abc import ABC, abstractmethod
 from functools import cache
 import subprocess
 import sys
@@ -17,6 +18,29 @@ from pre_commit_check.git_status import GitStatusABC
 REGION = "eu-central-1"
 
 
+class GitRemoteUrlABC(ABC):
+
+    @abstractmethod
+    def get_remote_url(self) -> str:
+        pass
+
+
+class GitRemoteUrl(GitRemoteUrlABC):
+
+    @cache
+    def get_remote_url(self) -> str:
+        """get git remote url"""
+        try:
+            return subprocess.run(["git", "config", "--get",
+                                   "remote.origin.url"], check=True, encoding="utf-8",
+                                  stdout=subprocess.PIPE).stdout.strip()
+        except subprocess.CalledProcessError as error:
+            print("git config --get remote.origin.url failed")
+            print("Is this really a git repository?")
+            print(error)
+            sys.exit(-1)
+
+
 @cache
 def get_remote_url() -> str:
     """get git remote url"""
@@ -31,9 +55,9 @@ def get_remote_url() -> str:
         sys.exit(-1)
 
 
-def is_aws_codecommit_repo() -> bool:
+def is_aws_codecommit_repo(git_remote_url: GitRemoteUrlABC) -> bool:
     """check if the local repo is a AWS CodeCommit repo"""
-    remote_url = get_remote_url()
+    remote_url = git_remote_url.get_remote_url()
     url_git = f"git-codecommit.{REGION}.amazonaws.com/v1/repos"
     url_http = f"codecommit::{REGION}://"
     if url_git in remote_url:
@@ -44,9 +68,9 @@ def is_aws_codecommit_repo() -> bool:
     return False
 
 
-def is_github_repo() -> bool:
+def is_github_repo(git_remote_url: GitRemoteUrlABC) -> bool:
     """check if the local repo is a GitHub repo."""
-    remote_url = get_remote_url()
+    remote_url = git_remote_url.get_remote_url()
     return "@github.com:" in remote_url
 
 

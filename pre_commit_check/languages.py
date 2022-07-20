@@ -7,7 +7,6 @@ import subprocess
 from typing import final
 
 from pre_commit_check.lint import Lint
-#from pre_commit_check.git import print_short_status
 from pre_commit_check.git_status import GitStatusABC
 
 SCRIPTS = ["codecommit-tags.py", "rusage.py", "aws-creds-role.py",

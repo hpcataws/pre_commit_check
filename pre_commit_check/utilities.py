@@ -8,7 +8,6 @@ import sys
 @cache
 def get_root() -> str:
     """Return the root path of the git repository."""
-
     try:
         return subprocess.run(["git", "rev-parse",
                                "--show-toplevel"], check=True, encoding="utf-8",
