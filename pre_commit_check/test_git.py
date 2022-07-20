@@ -1,6 +1,6 @@
 """tests for the git module"""
 
-from pre_commit_check.git import get_remote_url, is_default_branch_main, is_aws_codecommit_repo, GitRemoteUrlABC, REGION
+from pre_commit_check.git import is_default_branch_main, is_aws_codecommit_repo, GitRemoteUrlABC, REGION
 
 # is_github_repo
 
@@ -14,9 +14,9 @@ class GitRemoteUrlMock(GitRemoteUrlABC):
         return self.__url
 
 
-def test_git_remote_url():
-    """MVP test the git_remote_url function from the git module."""
-    get_remote_url()
+# def test_git_remote_url():
+#    """MVP test the git_remote_url function from the git module."""
+#    get_remote_url()
 
 
 # does not work with GitHub Actions

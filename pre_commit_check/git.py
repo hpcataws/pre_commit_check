@@ -41,18 +41,18 @@ class GitRemoteUrl(GitRemoteUrlABC):
             sys.exit(-1)
 
 
-@cache
-def get_remote_url() -> str:
-    """get git remote url"""
-    try:
-        return subprocess.run(["git", "config", "--get",
-                               "remote.origin.url"], check=True, encoding="utf-8",
-                              stdout=subprocess.PIPE).stdout.strip()
-    except subprocess.CalledProcessError as error:
-        print("git config --get remote.origin.url failed")
-        print("Is this really a git repository?")
-        print(error)
-        sys.exit(-1)
+# @cache
+# def get_remote_url() -> str:
+#    """get git remote url"""
+#    try:
+#        return subprocess.run(["git", "config", "--get",
+#                               "remote.origin.url"], check=True, encoding="utf-8",
+#                              stdout=subprocess.PIPE).stdout.strip()
+#    except subprocess.CalledProcessError as error:
+#        print("git config --get remote.origin.url failed")
+#        print("Is this really a git repository?")
+#        print(error)
+#        sys.exit(-1)
 
 
 def is_aws_codecommit_repo(git_remote_url: GitRemoteUrlABC) -> bool:
@@ -94,11 +94,11 @@ def is_default_branch_main() -> bool:
         sys.exit(-1)
 
 
-def check_default_branch_main_boto3() -> None:
+def check_default_branch_main_boto3(git_remote_url: GitRemoteUrlABC) -> None:
     """check if the default branch is main."""
     try:
         client = boto3.client('codecommit')
-        remote_url = get_remote_url()
+        remote_url = git_remote_url.get_remote_url()
         repo_name = remote_url.split('/')[-1]
         default_branch = client.get_repository(repositoryName=repo_name)[
             'repositoryMetadata']['defaultBranch']

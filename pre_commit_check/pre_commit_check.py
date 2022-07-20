@@ -124,7 +124,7 @@ def main() -> int:
         print(f"latexmk failed; please check main.log: {error}")
         return 1
 
-    check_default_branch_main_boto3()
+    check_default_branch_main_boto3(GitRemoteUrl())
 
     root = get_root()
     git_status = GitStatus()
