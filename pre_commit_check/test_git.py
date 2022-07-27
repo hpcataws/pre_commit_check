@@ -46,10 +46,13 @@ def test_is_aws_codecommit_repo():
         "ssh://git-codecommit.us-east-1.amazonaws.com/v1/repos/BerlinTM")
     mock_http = GitRemoteUrlMock(
         "codecommit::eu-central-1://benchmark-learning")
+    mock_pre = GitRemoteUrlMock(
+        "git@github.com:hpcataws/pre_commit_check.git")
     assert is_aws_codecommit_repo(mock_openmp) is True
     assert is_aws_codecommit_repo(mock_bench) is True
     assert is_aws_codecommit_repo(mock_other_region) is True
     assert is_aws_codecommit_repo(mock_http) is True
+    assert is_aws_codecommit_repo(mock_pre) is False
 
 
 # FIXME: failure
