@@ -41,7 +41,7 @@ log = logging.getLogger(__name__)
 
 @final
 class MissingLabelsLint(Lint):
-    """Lint labels"""
+    """Lint labels."""
 
     def run(self, root: str, git_status: GitStatusABC) -> None:
         labels = set()
@@ -71,7 +71,7 @@ class MissingLabelsLint(Lint):
 
 
 def primary_checks() -> int:
-    """primary checks"""
+    """Primary checks."""
 
     git_remote_url = GitRemoteUrl()
     if not sys.version_info >= (3, 9):
@@ -104,7 +104,7 @@ def primary_checks() -> int:
 
 
 def main() -> int:
-    """the main function"""
+    """The main function."""
 
     if primary_checks() != 0:
         return 1

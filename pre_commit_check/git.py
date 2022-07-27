@@ -1,4 +1,4 @@
-"""utilities for working with git repositories"""
+"""Utilities for working with git repositories."""
 
 from abc import ABC, abstractmethod
 from functools import cache
@@ -56,22 +56,22 @@ class GitRemoteUrl(GitRemoteUrlABC):
 
 
 def is_aws_codecommit_repo(git_remote_url: GitRemoteUrlABC) -> bool:
-    """check if the local repo is a AWS CodeCommit repo"""
+    """Check if the local repo is a AWS CodeCommit repo."""
     remote_url = git_remote_url.get_remote_url()
-    url_git = f"git-codecommit.{REGION}.amazonaws.com/v1/repos"
-    url_http = f"codecommit::{REGION}://"
-    if url_git in remote_url:
+    # url_git = f"git-codecommit.{REGION}.amazonaws.com/v1/repos"
+    # url_http = f"codecommit::{REGION}://"
+    if remote_url.startswith("codecommit::"):  # http cooler so first
         return True
-    if url_http in remote_url:
+    if remote_url.startswith("ssh://git-codecommit.") and ".amazonaws.com/v1/repos" in remote_url:  # ssh
         return True
 
     return False
 
 
 def is_github_repo(git_remote_url: GitRemoteUrlABC) -> bool:
-    """check if the local repo is a GitHub repo."""
-    remote_url = git_remote_url.get_remote_url()
-    return "@github.com:" in remote_url
+    """Check if the local repo is a GitHub repo."""
+    # remote_url = git_remote_url.get_remote_url()
+    return "@github.com:" in git_remote_url.get_remote_url()
 
 
 def is_default_branch_main() -> bool:

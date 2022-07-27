@@ -1,5 +1,6 @@
 pytest
 pytest-html
+pytest-cov
 pytype
 mypy
 pylint
