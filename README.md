@@ -1,4 +1,4 @@
-![python-package-conda](https://github.com/hpcataws/pre_commit_check/workflows/python-package-conda.yml/badge.svg)
+![python-package-conda](https://github.com/hpcataws/pre_commit_check/actions/workflows/python-package-conda.yml/badge.svg)
 
 # pre_commit_check
 
