@@ -44,6 +44,7 @@ class MissingLabelsLint(Lint):
     """Lint labels."""
 
     def run(self, root: str, git_status: GitStatusABC) -> None:
+        """Find labels that were defined but not reference."""
         labels = set()
         mainlabels = set()
         with fileinput.input(files=("main.aux")) as file_input:
@@ -72,7 +73,6 @@ class MissingLabelsLint(Lint):
 
 def primary_checks() -> int:
     """Primary checks."""
-
     git_remote_url = GitRemoteUrl()
     if not sys.version_info >= (3, 9):
         print("This script requires Python 3.9 or higher!")
@@ -104,8 +104,7 @@ def primary_checks() -> int:
 
 
 def main() -> int:
-    """The main function."""
-
+    """Define the main function."""
     if primary_checks() != 0:
         return 1
 

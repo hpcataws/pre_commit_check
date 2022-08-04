@@ -9,4 +9,5 @@ boto3
 bibtexparser
 botocore
 GitPython
+tox
 

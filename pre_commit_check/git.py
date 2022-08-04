@@ -1,7 +1,7 @@
 """Utilities for working with git repositories."""
 
 from abc import ABC, abstractmethod
-from functools import cache
+from functools import cache            # 3.9
 import subprocess
 import sys
 from typing import final

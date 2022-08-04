@@ -4,6 +4,17 @@ import collections
 from contextlib import contextmanager
 from typing import final
 
+BLOCK_LIST = ["INPUT /usr/local", "INPUT /etc",
+              "INPUT /usr/share", "INPUT /var/lib"]
+
+
+def is_start_in_black_list(line: str) -> bool:
+    """Check for black listed lines."""
+    for entry in BLOCK_LIST:
+        if line.startswith(entry):
+            return True
+    return False
+
 
 @final
 class MainFlsLines(collections.abc.Iterator):
@@ -14,6 +25,7 @@ class MainFlsLines(collections.abc.Iterator):
         self.file_descriptor = file_descriptor
 
     def __iter__(self):
+        """Iterate function for abc.Iterator."""
         return self
 
     def __next__(self):
@@ -22,7 +34,7 @@ class MainFlsLines(collections.abc.Iterator):
             line = self.file_descriptor.readline()
             if not line:
                 raise StopIteration
-            if line.startswith("INPUT ") and not line.startswith("INPUT /usr/local"):
+            if line.startswith("INPUT ") and not is_start_in_black_list(line):
                 return line.removeprefix("INPUT ").removesuffix("\n")
 
 
