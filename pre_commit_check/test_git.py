@@ -1,7 +1,7 @@
 """tests for the git module"""
 
-import os
 from pre_commit_check.git import is_default_branch_main, is_aws_codecommit_repo, GitRemoteUrlABC, GitRemoteUrl, is_github_repo
+from pre_commit_check.test_decorators import *
 
 
 class GitRemoteUrlMock(GitRemoteUrlABC):
@@ -13,11 +13,11 @@ class GitRemoteUrlMock(GitRemoteUrlABC):
         return self.__url
 
 
+@skipIfGitHubAction
 def test_git_remote_url():
     """MVP test the git_remote_url function from the git module."""
-    if 'GITHUB_ACTIONS' not in os.environ:
-        git = GitRemoteUrl()
-        assert is_github_repo(git) is True
+    git = GitRemoteUrl()
+    assert is_github_repo(git) is True
 
 
 def test_is_github_repo():
@@ -33,8 +33,9 @@ def test_is_github_repo():
     assert is_github_repo(mock_rust) is True
 
 
-# def test_is_default_branch_main():
-#  assert is_default_branch_main() is True
+@skipIfGitHubAction
+def test_is_default_branch_main():
+    assert is_default_branch_main() is True
 
 
 def test_is_aws_codecommit_repo():
@@ -53,6 +54,3 @@ def test_is_aws_codecommit_repo():
     assert is_aws_codecommit_repo(mock_other_region) is True
     assert is_aws_codecommit_repo(mock_http) is True
     assert is_aws_codecommit_repo(mock_pre) is False
-
-
-# FIXME: failure
