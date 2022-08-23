@@ -10,7 +10,8 @@ def get_root() -> str:
     """Return the root path of the git repository."""
     try:
         return subprocess.run(["git", "rev-parse",
-                               "--show-toplevel"], check=True, encoding="utf-8",
+                               "--show-toplevel"],
+                              check=True, encoding="utf-8",
                               stdout=subprocess.PIPE).stdout.strip()
     except subprocess.CalledProcessError as error:
         print("git rev-parse --show-toplevel failed")

@@ -1,7 +1,7 @@
 """tests for the git module"""
 
 from pre_commit_check.git import is_default_branch_main, is_aws_codecommit_repo, GitRemoteUrlABC, GitRemoteUrl, is_github_repo
-from pre_commit_check.test_decorators import *
+from pre_commit_check.test_decorators import skipIfGitHubAction
 
 
 class GitRemoteUrlMock(GitRemoteUrlABC):
