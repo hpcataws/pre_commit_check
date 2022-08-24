@@ -18,13 +18,9 @@ import subprocess
 import sys
 from typing import final
 
-# import bibtexparser  # type: ignore
-# import botocore      # type: ignore
-# import boto3         # type: ignore
-
 from pre_commit_check.bibtex import BibTeXLint
 from pre_commit_check.lint import Lint
-from pre_commit_check.git import is_aws_codecommit_repo, is_default_branch_main, CodeCommit, check_default_branch_main_boto3, GitRemoteUrl
+from pre_commit_check.git import is_aws_codecommit_repo, is_default_branch_main, CodeCommit, GitRemoteUrl
 from pre_commit_check.utilities import get_root
 from pre_commit_check.languages import SwiftLint, RustLint, PythonLint, MakeLint
 from pre_commit_check.latex import LaTexLint
@@ -122,8 +118,6 @@ def main() -> int:
     except subprocess.CalledProcessError as error:
         print(f"latexmk failed; please check main.log: {error}")
         return 1
-
-    check_default_branch_main_boto3(GitRemoteUrl())
 
     root = get_root()
     git_status = GitStatus()
