@@ -39,19 +39,6 @@ class GitRemoteUrl(GitRemoteUrlABC):
             sys.exit(-1)
 
 
-def is_aws_codecommit_repo(git_remote_url: GitRemoteUrlABC) -> bool:
-    """Check if the local repo is a AWS CodeCommit repo."""
-    remote_url = git_remote_url.get_remote_url()
-    # url_git = f"git-codecommit.{REGION}.amazonaws.com/v1/repos"
-    # url_http = f"codecommit::{REGION}://"
-    if remote_url.startswith("codecommit::"):  # http cooler so first
-        return True
-    if remote_url.startswith("ssh://git-codecommit.") and ".amazonaws.com/v1/repos" in remote_url:  # ssh
-        return True
-
-    return False
-
-
 def is_github_repo(git_remote_url: GitRemoteUrlABC) -> bool:
     """Check if the local repo is a GitHub repo."""
     # remote_url = git_remote_url.get_remote_url()
@@ -80,37 +67,38 @@ def is_default_branch_main() -> bool:
 
 @final
 class GitWrapper:
-    """Wrapper around GitPython and AWS CodeCommit."""
+    """Wrapper around GitPython."""
 
     def __init__(self):
+        """Run the constructor."""
         self.__repo = Repo(get_root())
 
     def get_origin_url(self) -> str:
-        """the remote origin url."""
+        """Get the remote origin url."""
         return self.__repo.remotes.origin.url
 
     def get_head_sha(self) -> str:
-        """the hexsha of the commit of the HEAD object."""
+        """Get the hexsha of the commit of the HEAD object."""
         return self.__repo.head.commit.hexsha
 
     def get_origin_head_sha(self) -> str:
-        """ a remote tracking branch."""
+        """Get a remote tracking branch."""
         return self.__repo.refs['origin/main'].commit.hexsha
 
     def get_remote_origin_head_sha(self) -> str:
-        """the remote head commit sha."""
+        """Get the remote head commit sha."""
         url = self.get_origin_url()
         ref = git.cmd.Git().ls_remote(url, heads=True)
         return ref.split('\t')[0]
 
     def get_nr_of_local_commits(self) -> int:
-        """the list of local commits."""
+        """Get the list of local commits."""
         return len(list(self.__repo.iter_commits('origin/main..HEAD')))
 
 
 @final
-class CodeCommit(Lint):
-    """Lint AWS CodeCommit and local git."""
+class LocalGit(Lint):
+    """Lint local git."""
 
     # git rev-parse origin/HEAD # to get the latest commit on the remote
 
@@ -121,9 +109,11 @@ class CodeCommit(Lint):
     # git ls-remote -h `git config --get remote.origin.url`
 
     def __init__(self):
+        """Run constructor."""
         self.__git_wrapper = GitWrapper()
 
     def run(self, root: str, git_status: GitStatusABC) -> None:
+        """Run lint on local git."""
         head_sha = self.__git_wrapper.get_head_sha()
         upstream_sha = self.__git_wrapper.get_origin_head_sha()
         if head_sha != upstream_sha:

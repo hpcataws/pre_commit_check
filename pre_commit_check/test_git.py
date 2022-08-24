@@ -1,6 +1,6 @@
 """tests for the git module"""
 
-from pre_commit_check.git import is_default_branch_main, is_aws_codecommit_repo, GitRemoteUrlABC, GitRemoteUrl, is_github_repo
+from pre_commit_check.git import is_default_branch_main, GitRemoteUrlABC, GitRemoteUrl, is_github_repo
 from pre_commit_check.test_decorators import skipIfGitHubAction
 
 
@@ -36,21 +36,3 @@ def test_is_github_repo():
 @skipIfGitHubAction
 def test_is_default_branch_main():
     assert is_default_branch_main() is True
-
-
-def test_is_aws_codecommit_repo():
-    mock_openmp = GitRemoteUrlMock(
-        "ssh://git-codecommit.eu-central-1.amazonaws.com/v1/repos/openmp-plus-x")
-    mock_bench = GitRemoteUrlMock(
-        "ssh://git-codecommit.eu-central-1.amazonaws.com/v1/repos/benchmark-learning")
-    mock_other_region = GitRemoteUrlMock(
-        "ssh://git-codecommit.us-east-1.amazonaws.com/v1/repos/BerlinTM")
-    mock_http = GitRemoteUrlMock(
-        "codecommit::eu-central-1://benchmark-learning")
-    mock_pre = GitRemoteUrlMock(
-        "git@github.com:hpcataws/pre_commit_check.git")
-    assert is_aws_codecommit_repo(mock_openmp) is True
-    assert is_aws_codecommit_repo(mock_bench) is True
-    assert is_aws_codecommit_repo(mock_other_region) is True
-    assert is_aws_codecommit_repo(mock_http) is True
-    assert is_aws_codecommit_repo(mock_pre) is False
