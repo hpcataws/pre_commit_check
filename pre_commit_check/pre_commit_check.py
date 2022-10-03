@@ -24,6 +24,7 @@ from pre_commit_check.git import is_default_branch_main, LocalGit
 from pre_commit_check.utilities import get_root
 from pre_commit_check.languages import SwiftLint, RustLint, PythonLint, MakeLint
 from pre_commit_check.latex import LaTexLint
+from pre_commit_check.cmake import CMakeLint
 from pre_commit_check.git_status import GitStatusABC, GitStatus
 
 log = logging.getLogger(__name__)
@@ -117,7 +118,7 @@ def main() -> int:
     git_status = GitStatus()
 
     lints = [PythonLint(), LaTexLint(), BibTeXLint(), SwiftLint(), RustLint(),
-             LocalGit(), MakeLint(), MissingLabelsLint()]
+             LocalGit(), MakeLint(), CMakeLint(), MissingLabelsLint()]
     for lint in lints:
         lint.run(root, git_status)
 
