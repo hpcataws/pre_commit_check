@@ -9,23 +9,21 @@ __version__ = '0.1'
 __author__ = "T. Schütt <schuett@gmail.com>"
 __doc__ = "Lints the main.tex file before a git commit"
 
-import fileinput
 import logging
 import os
-import re
 import shutil
 import subprocess
 import sys
-from typing import final
 
 from pre_commit_check.bibtex import BibTeXLint
-from pre_commit_check.lint import Lint
-from pre_commit_check.git import is_default_branch_main, LocalGit
+from pre_commit_check.git import is_default_branch_main
+from pre_commit_check.local_git import LocalGit
 from pre_commit_check.utilities import get_root
 from pre_commit_check.languages import SwiftLint, RustLint, PythonLint, MakeLint
 from pre_commit_check.latex import LaTexLint
+from pre_commit_check.missing_labels import MissingLabelsLint
 from pre_commit_check.cmake import CMakeLint
-from pre_commit_check.git_status import GitStatusABC, GitStatus
+from pre_commit_check.git_status import GitStatus
 
 log = logging.getLogger(__name__)
 
@@ -34,38 +32,6 @@ log = logging.getLogger(__name__)
 # the input and output files of the last latex command are in main.fls
 
 """Checks invariants and lints before running git commit"""
-
-
-@final
-class MissingLabelsLint(Lint):
-    """Lint labels."""
-
-    def run(self, root: str, git_status: GitStatusABC) -> None:
-        """Find labels that were defined but not reference."""
-        labels = set()
-        mainlabels = set()
-        with fileinput.input(files=("main.aux")) as file_input:
-            for line in file_input:
-                if line.startswith("\\newlabel{"):
-                    first = line.removeprefix("\\newlabel{")
-                    label = first.split('}')[0]
-                    if label.startswith("fig.") or label.startswith("sec."):
-                        labels.add(label)
-
-        with fileinput.input(files=("main.tex")) as file_input:
-            for line in file_input:
-                idxs = [m.start() for m in re.finditer('figref', line)]
-                for idx in idxs:
-                    label = line[idx:-1].removeprefix("figref{")
-                    label = label.split('}')[0]
-                mainlabels.add(label)
-                idxs = [m.start() for m in re.finditer('secref', line)]
-                for idx in idxs:
-                    label = line[idx:-1].removeprefix("secref{")
-                    label = label.split('}')[0]
-                    mainlabels.add(label)
-
-        print(f"uncited label: {labels-mainlabels}")
 
 
 def primary_checks() -> int:
