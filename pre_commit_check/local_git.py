@@ -4,7 +4,7 @@ from typing import final
 
 from pre_commit_check.git_status import GitStatusABC
 from pre_commit_check.lint import Lint
-from pre_commit_check.local_git import GitWrapper
+from pre_commit_check.git import GitWrapper
 
 
 @final
