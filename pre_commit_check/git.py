@@ -1,6 +1,7 @@
 """Utilities for working with git repositories."""
 
 from abc import ABC, abstractmethod
+import errno
 from functools import cache            # 3.9
 import subprocess
 import sys
@@ -25,7 +26,7 @@ class GitRemoteUrl(GitRemoteUrlABC):
 
     @cache
     def get_remote_url(self) -> str:
-        """get git remote url"""
+        """Get git remote url."""
         try:
             return subprocess.run(["git", "config", "--get",
                                    "remote.origin.url"], check=True, encoding="utf-8",
@@ -44,10 +45,11 @@ def is_github_repo(git_remote_url: GitRemoteUrlABC) -> bool:
 
 
 def is_default_branch_main() -> bool:
-    """check if the default branch is main"""
+    """Check if the default branch is main."""
     try:
         lines = subprocess.run(["git", "remote", "show", "origin"], check=True,
-                               encoding="utf-8", stdout=subprocess.PIPE).stdout.splitlines()
+                               encoding="utf-8",
+                               stdout=subprocess.PIPE).stdout.splitlines()
         for line in lines:
             if "HEAD branch" in line:
                 default = line.split(':')[1].removeprefix(' ')
@@ -60,6 +62,10 @@ def is_default_branch_main() -> bool:
         print("git remote show origin failed")
         print("Is this really a git repository?")
         print(error)
+        print(f"stdout    : x{error.stdout}x")
+        print(f"stderr    : x{error.stderr}x")
+        print(f"returncode: x{error.returncode}x")
+        print(f"returncode: x{errno.errorcode[error.returncode]}x")
         sys.exit(-1)
 
 
