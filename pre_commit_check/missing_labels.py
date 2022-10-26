@@ -37,4 +37,5 @@ class MissingLabelsLint(Lint):
                     label = label.split('}')[0]
                     mainlabels.add(label)
 
-        print(f"uncited label: {labels-mainlabels}")
+        if labels-mainlabels:
+            print(f"uncited label: {labels-mainlabels}")
