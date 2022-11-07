@@ -36,8 +36,8 @@ log = logging.getLogger(__name__)
 
 def primary_checks() -> int:
     """Primary checks."""
-    if not sys.version_info >= (3, 9):
-        print("This script requires Python 3.9 or higher!")
+    if not sys.version_info >= (3, 10):
+        print("This script requires Python 3.10 or higher!")
         print("You are using Python {}.{}.".format(
             sys.version_info.major, sys.version_info.minor))
         return 1

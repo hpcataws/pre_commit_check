@@ -2,25 +2,40 @@
 
 # pre_commit_check
 
-
-```bash
+```console
 > python -m build
 > pip install -r requirements.txt
 ```
 
+* Python >= 3.10
 
 # Development mode
-```bash
+
+```console
 > pip install --editable .
 ```
 
-
-
-```bash
+```console
 > /Users/king/opt/anaconda3/bin/precommitcheck
 ```
 
-```bash
+# Test
+
+```console
 > pytest
 > pytest --html=report.html --self-contained-html
 ```
+
+```console
+> tox
+```
+
+* Static analyzers
+
+```console
+> ./check.sh
+```
+
+# TODO
+
+* structural pattern matching

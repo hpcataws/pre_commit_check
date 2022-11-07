@@ -1,6 +1,7 @@
 """lints for bibtex files."""
 
 import os
+from dataclasses import dataclass, InitVar
 import fileinput
 import sys
 from typing import final
@@ -12,12 +13,19 @@ from pre_commit_check.fls_file import main_fls
 from pre_commit_check.git_status import GitStatusABC
 
 
+@dataclass(frozen=True, eq=True)
+class Citation:
+    """A citation."""
+
+    name: InitVar[str]
+
+
 @final
 class BibTeXLint(Lint):
     """Lint bib files and citations of main.tex."""
 
     @staticmethod
-    def get_citations() -> set[str]:
+    def get_citations() -> set[Citation]:
         """Return the bibtex entries cited by main.tex."""
         citations = set()
         with fileinput.input(files=("main.aux")) as file_input:
@@ -26,7 +34,7 @@ class BibTeXLint(Lint):
                     cites = line.removeprefix("\citation{").removesuffix("}\n")
                     split = cites.split(',')
                     for cite in split:
-                        citations.add(cite)
+                        citations.add(Citation(cite))
         return citations
 
     # bib files are not input files for latex. they are inputs for bibtex
@@ -67,7 +75,7 @@ class BibTeXLint(Lint):
             with open(bib_file) as bibtex_file:
                 bib_database = bibtexparser.load(bibtex_file)
                 for entry in bib_database.entries:
-                    if not entry['ID'] in citations:
+                    if not Citation(entry['ID']) in citations:  # problem
                         entry_id = entry['ID']
                         print(f"remove {entry_id:20} from {bib_file}")
                         sys.exit(-1)
