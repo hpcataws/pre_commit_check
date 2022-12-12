@@ -1,5 +1,7 @@
 ![python-package-conda](https://github.com/hpcataws/pre_commit_check/actions/workflows/python-package-conda.yml/badge.svg)
 
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/hpcataws/pre_commit_check/badge)](https://api.securityscorecards.dev/projects/github.com/hpcataws/pre_commit_check)
+
 # pre_commit_check
 
 ```console
